@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('input')->comment('输入参数');
             $table->json('result')->comment('执行结果');
             $table->tinyInteger('status', unsigned: true)->comment('0-处理成功，1-未处理，2-处理中，3-处理失败');
+            $table->string('notify')->default('')->comment('回调地址');
             $table->timestamps();
 
             // index
