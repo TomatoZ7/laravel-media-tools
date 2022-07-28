@@ -2,10 +2,12 @@
 
 namespace App\Service\Tasks;
 
+use App\Models\Tasks\ImageTask;
+use Illuminate\Support\Facades\DB;
+
 class ImageTaskService
 {
-
-    public static function createTask(array $input)
+    public static function createTask(array $input, int $type)
     {
         try {
 
@@ -13,8 +15,16 @@ class ImageTaskService
                 throw new \Exception();
             }
 
-        } catch (\Exception $e) {
+            DB::beginTransaction();
 
+            ImageTask::query()->insert([
+
+            ]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
         }
     }
 }

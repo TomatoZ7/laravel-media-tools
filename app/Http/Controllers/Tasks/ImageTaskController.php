@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tasks;
 
 use App\Enums\ImageTaskEnum;
+use App\Service\Tasks\ImageTaskService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -30,12 +31,8 @@ class ImageTaskController extends Controller
                 ], 400);
             }
 
-            $type = $request->input('type', 0);
-
-            switch ($type) {
-                case ImageTaskEnum::CROP_IMAGE:
-
-            }
+            $params = $request->all();
+            ImageTaskService::createTask($params, (int)$type);
 
         } catch (\Exception $e) {
             return response()->json([
