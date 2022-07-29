@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 30);
             $table->tinyInteger('type', unsigned: true)->comment('1-图片裁剪');
-            $table->json('input')->comment('输入参数');
-            $table->json('result')->comment('执行结果');
+            $table->json('input')->nullable()->comment('输入参数');
+            $table->json('result')->nullable()->comment('执行结果');
             $table->tinyInteger('status', unsigned: true)->comment('0-处理成功，1-未处理，2-处理中，3-处理失败');
             $table->string('notify')->default('')->comment('回调地址');
             $table->timestamps();

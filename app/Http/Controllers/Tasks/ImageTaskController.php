@@ -7,6 +7,7 @@ use App\Service\Tasks\ImageTaskService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ImageTaskController extends Controller
 {
@@ -18,10 +19,12 @@ class ImageTaskController extends Controller
     {
         try {
 
-            // validator
-            $validator = Validator::make($request->all(), [
-                'type' => ['required'],
-                'exec_params' => ['required']
+            $params = $request->all();
+
+            // Validator
+            $validator = Validator::make($params, [
+                'type' => ['required', Rule::in(ImageTaskEnum::TYPE_SCOPE)],
+                'exec_params' => ['required', 'array']
             ]);
 
             if ($validator->stopOnFirstFailure()->fails()) {
@@ -31,8 +34,14 @@ class ImageTaskController extends Controller
                 ], 400);
             }
 
-            $params = $request->all();
-            ImageTaskService::createTask($params, (int)$type);
+            list($code, $msg) = ImageTaskService::createTask($params);
+            if ($code) {
+                throw new \Exception('error.', 500);
+            }
+
+            return response()->json([
+                'msg' => 'success'
+            ]);
 
         } catch (\Exception $e) {
             return response()->json([
