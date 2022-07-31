@@ -3,8 +3,10 @@
 namespace App\Service\Tasks;
 
 use App\Enums\ImageTaskEnum;
+use App\Jobs\ProcessImageTask;
 use App\Models\Tasks\ImageTask;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
 class ImageTaskService
@@ -24,7 +26,7 @@ class ImageTaskService
 
             DB::beginTransaction();
 
-            ImageTask::query()->insert([
+            $image_task = ImageTask::query()->create([
                 'name' => $input['name'] ?? '未命名任务' . Str::random(6),
                 'type' => (int)($input['type'] ?? 0),
                 'input' => json_encode($input['exec_params'] ?? []),
@@ -32,7 +34,8 @@ class ImageTaskService
                 'notify' => $input['notify'] ?? ''
             ]);
 
-            // TODO:redis list
+            // 调度任务
+            ProcessImageTask::dispatch($image_task);
 
             DB::commit();
 

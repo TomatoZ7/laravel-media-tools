@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Tasks\ImageTaskController;
+use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,3 +19,5 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('image_task')->namespace('Tasks')->group(function () {
     Route::post('create', [ImageTaskController::class, 'create']);
 });
+
+Route::get('test', [TestController::class, 'test']);
