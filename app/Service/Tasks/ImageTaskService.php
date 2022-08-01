@@ -35,15 +35,17 @@ class ImageTaskService
             ]);
 
             // 调度任务
-            ProcessImageTask::dispatch($image_task);
+            ProcessImageTask::dispatch($image_task)
+                ->onConnection('redis')
+                ->onQueue('image_task');
 
             DB::commit();
 
-            return [0, 'success'];
+            return [0, 'success', $image_task['id']];
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return [1, $e->getMessage()];
+            return [1, $e->getMessage(), null];
         }
     }
 }

@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Utils\FileUtil;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Redis;
-use RedisException;
 
 class TestController extends Controller
 {
-    /**
-     * @throws RedisException
-     */
     public function test()
     {
-        $redis = Redis::connection()->client();
-        echo $redis->ping();
+//        dd(FileUtil::downloadByUrl('https://img-baofun.zhhainiao.com/fs/8d7339be4e51d15f15d5d601d41260de.jpg'));
+
+        dd(FileUtil::createTmpDir());
     }
 }

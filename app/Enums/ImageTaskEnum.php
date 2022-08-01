@@ -9,4 +9,6 @@ class ImageTaskEnum
 
     const STATUS_WAIT = 1;
     const STATUS_PROCESSING = 2;
+    const STATUS_SUCCESS = 3;
+    const STATUS_FAIL = 4;
 }

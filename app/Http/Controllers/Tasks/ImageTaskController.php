@@ -34,13 +34,16 @@ class ImageTaskController extends Controller
                 ], 400);
             }
 
-            list($code, $msg) = ImageTaskService::createTask($params);
+            list($code, $msg, $id) = ImageTaskService::createTask($params);
             if ($code) {
                 throw new \Exception('error.', 500);
             }
 
             return response()->json([
-                'msg' => 'success'
+                'msg' => 'success',
+                'data' => [
+                    'id' => $id
+                ]
             ]);
 
         } catch (\Exception $e) {

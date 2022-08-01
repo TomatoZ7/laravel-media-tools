@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Enums\ImageTaskEnum;
 use App\Models\Tasks\ImageTask;
-use App\Service\Tasks\ImageProcessor;
+use App\Service\Tasks\ImageProcessorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,6 +30,8 @@ class ProcessImageTask implements ShouldQueue
      */
     public function __construct(ImageTask $image_task)
     {
+        $this->onConnection('redis')
+            ->onQueue('image_task');
         $this->image_task = $image_task;
     }
 
@@ -38,11 +40,27 @@ class ProcessImageTask implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ImageProcessor $image_processor)
+    public function handle(ImageProcessorService $image_processor)
     {
         $this->image_task['status'] = ImageTaskEnum::STATUS_PROCESSING;
         $this->image_task->save();
 
-        // TODO: processor handle
+        $task_type = $this->image_task['type'];
+        $input = json_decode($this->image_task['input'], true);
+
+        switch ($task_type) {
+            case ImageTaskEnum::TYPE_CROP_IMAGE:
+                list($code, $msg, $res) = $image_processor->handleProcessImage($input);
+                break;
+            default:
+                $code = 1;
+                $msg = 'Invalid task type.';
+                $res = [];
+        }
+
+        $this->image_task->update([
+            'status' => $code ? ImageTaskEnum::STATUS_FAIL : ImageTaskEnum::STATUS_SUCCESS,
+            'result' => $code ? null : json_encode($res),
+        ]);
     }
 }
